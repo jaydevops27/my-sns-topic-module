@@ -19,6 +19,12 @@ data "aws_iam_policy_document" "sns_topic" {
   }
 }
 
+resource "aws_sns_topic_subscription" "sns_subscription" {
+  topic_arn = aws_sns_topic.sns_topic.arn
+  protocol  = var.sns_subscription_protocol
+  endpoint  = var.sns_subscription_endpoint
+}
+
 output "sns_topic_arn" {
   description = "The ARN of the created SNS topic."
   value       = aws_sns_topic.sns_topic.arn
