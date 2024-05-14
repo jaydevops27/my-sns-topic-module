@@ -3,12 +3,24 @@ provider "aws" {
 }
 
 resource "aws_sns_topic" "sns_topic" {
-  name = var.sns_topic_name
-
-  // Add other attributes here if needed
+  name              = var.sns_topic_name
+  display_name      = var.sns_topic_name
+  policy            = data.aws_iam_policy_document.sns_topic.json
+  delivery_policy   = var.sns_delivery_policy
+  application_succe = var.application_succe
+  application_fail  = var.application_fail
+  endpoint          = var.sns_topic_endpoint
+  protocol          = var.sns_topic_protocol
 }
 
-output "sns_topic_arn" {
-  description = "The ARN of the created SNS topic."
-  value       = aws_sns_topic.sns_topic.arn
+data "aws_iam_policy_document" "sns_topic" {
+  statement {
+    actions   = ["sns:Publish"]
+    resources = [aws_sns_topic.sns_topic.arn]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
 }
